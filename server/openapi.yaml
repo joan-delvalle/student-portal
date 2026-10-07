@@ -1,0 +1,684 @@
+openapi: 3.0.3
+
+info:
+  title: Student Portal API
+  description: REST API for the Student Portal
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+
+security: []
+
+tags:
+  - name: Health
+  - name: Students
+  - name: Announcements
+  - name: Subjects
+  - name: Schedule
+  - name: Grades
+  - name: Enrollment
+  - name: Finance
+  - name: Library
+  - name: Clinic
+
+paths:
+
+  # =========================
+  # HEALTH
+  # =========================
+
+  /api/v1/health:
+    get:
+      tags:
+        - Health
+      summary: Check API health
+      responses:
+        "200":
+          description: API is working
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  # =========================
+  # STUDENTS
+  # =========================
+
+  /api/v1/students/{studentId}:
+    get:
+      tags:
+        - Students
+      summary: Get student information
+
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+
+      responses:
+        "200":
+          description: Student found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # =========================
+  # ANNOUNCEMENTS
+  # =========================
+
+  /api/v1/announcements:
+    get:
+      tags:
+        - Announcements
+      summary: Get all announcements
+
+      responses:
+        "200":
+          description: List of announcements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Announcement"
+
+  /api/v1/announcements/{id}:
+    get:
+      tags:
+        - Announcements
+      summary: Get announcement by ID
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+
+      responses:
+        "200":
+          description: Announcement found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Announcement"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # =========================
+  # SUBJECTS
+  # =========================
+
+  /api/v1/subjects/{studentId}:
+    get:
+      tags:
+        - Subjects
+      summary: Get subjects of a student
+
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+
+      responses:
+        "200":
+          description: Student subjects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  studentId:
+                    type: string
+                    example: "2026-00123"
+                  subjects:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Subject"
+
+  # =========================
+  # SCHEDULE
+  # =========================
+
+  /api/v1/schedule/{studentId}:
+    get:
+      tags:
+        - Schedule
+      summary: Get student schedule
+
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+
+      responses:
+        "200":
+          description: Student schedule
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  studentId:
+                    type: string
+                    example: "2026-00123"
+                  schedule:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Schedule"
+
+  # =========================
+  # GRADES
+  # =========================
+
+  /api/v1/grades/{studentId}:
+    get:
+      tags:
+        - Grades
+      summary: Get student grades
+
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+
+      responses:
+        "200":
+          description: Student grades
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  studentId:
+                    type: string
+                    example: "2026-00123"
+                  grades:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Grade"
+
+  # =========================
+  # ENROLLMENT
+  # =========================
+
+  /api/v1/enrollment/{studentId}:
+    get:
+      tags:
+        - Enrollment
+      summary: Get student enrollment
+
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+
+      responses:
+        "200":
+          description: Enrollment record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Enrollment"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    post:
+      tags:
+        - Enrollment
+      summary: Create enrollment request
+
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnrollmentRequest"
+
+            example:
+              semester: "1st Semester"
+              schoolYear: "2026-2027"
+              subjects:
+                - "IT311"
+                - "IT312"
+                - "IT313"
+
+      responses:
+        "201":
+          description: Enrollment created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Enrollment"
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  # =========================
+  # FINANCE
+  # =========================
+
+  /api/v1/finance/{studentId}:
+    get:
+      tags:
+        - Finance
+      summary: Get student finance information
+
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+
+      responses:
+        "200":
+          description: Finance record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Finance"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # =========================
+  # LIBRARY
+  # =========================
+
+  /api/v1/library/{studentId}:
+    get:
+      tags:
+        - Library
+      summary: Get student library records
+
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+
+      responses:
+        "200":
+          description: Library records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  studentId:
+                    type: string
+                    example: "2026-00123"
+                  records:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LibraryRecord"
+
+  # =========================
+  # CLINIC
+  # =========================
+
+  /api/v1/clinic/{studentId}:
+    get:
+      tags:
+        - Clinic
+      summary: Get student clinic records
+
+      parameters:
+        - $ref: "#/components/parameters/StudentId"
+
+      responses:
+        "200":
+          description: Clinic records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  studentId:
+                    type: string
+                    example: "2026-00123"
+                  records:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ClinicRecord"
+
+# ==================================================
+# COMPONENTS
+# ==================================================
+
+components:
+
+  # =========================
+  # PARAMETERS
+  # =========================
+
+  parameters:
+
+    StudentId:
+      name: studentId
+      in: path
+      required: true
+      description: Unique student ID
+      schema:
+        type: string
+      example: "2026-00123"
+
+  # =========================
+  # RESPONSES
+  # =========================
+
+  responses:
+
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          example:
+            type: "about:blank"
+            title: "Invalid Request"
+            status: 400
+            detail: "The request contains invalid data."
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          example:
+            type: "about:blank"
+            title: "Resource Not Found"
+            status: 404
+            detail: "The requested resource does not exist."
+
+  # =========================
+  # SCHEMAS
+  # =========================
+
+  schemas:
+
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "about:blank"
+
+        title:
+          type: string
+          example: "Resource Not Found"
+
+        status:
+          type: integer
+          example: 404
+
+        detail:
+          type: string
+          example: "The requested resource does not exist."
+
+    Student:
+      type: object
+      properties:
+        studentId:
+          type: string
+          example: "2026-00123"
+
+        name:
+          type: string
+          example: "Angelica I. De La Torre"
+
+        course:
+          type: string
+          example: "BSIT"
+
+        yearLevel:
+          type: integer
+          example: 3
+
+        section:
+          type: string
+          example: "JAVA"
+
+        email:
+          type: string
+          example: "angelica@example.com"
+
+    Announcement:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+
+        title:
+          type: string
+          example: "Enrollment Period"
+
+        content:
+          type: string
+          example: "Enrollment for the new semester is now open."
+
+        department:
+          type: string
+          example: "Registrar"
+
+        date:
+          type: string
+          format: date
+          example: "2026-10-07"
+
+    Subject:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+
+        studentId:
+          type: string
+          example: "2026-00123"
+
+        code:
+          type: string
+          example: "IT311"
+
+        name:
+          type: string
+          example: "Systems Integration"
+
+        units:
+          type: integer
+          example: 3
+
+        instructor:
+          type: string
+          example: "Mr. Santos"
+
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+
+        studentId:
+          type: string
+          example: "2026-00123"
+
+        subjectCode:
+          type: string
+          example: "IT311"
+
+        subjectName:
+          type: string
+          example: "Systems Integration"
+
+        day:
+          type: string
+          example: "Monday"
+
+        time:
+          type: string
+          example: "8:00 AM - 10:00 AM"
+
+        room:
+          type: string
+          example: "Laboratory 1"
+
+    Grade:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+
+        studentId:
+          type: string
+          example: "2026-00123"
+
+        subjectCode:
+          type: string
+          example: "IT311"
+
+        subjectName:
+          type: string
+          example: "Systems Integration"
+
+        grade:
+          type: number
+          format: float
+          example: 1.75
+
+        remarks:
+          type: string
+          example: "Passed"
+
+    Enrollment:
+      type: object
+      properties:
+        studentId:
+          type: string
+          example: "2026-00123"
+
+        semester:
+          type: string
+          example: "1st Semester"
+
+        schoolYear:
+          type: string
+          example: "2026-2027"
+
+        status:
+          type: string
+          example: "Enrolled"
+
+        subjects:
+          type: array
+          items:
+            type: string
+          example:
+            - "IT311"
+            - "IT312"
+            - "IT313"
+
+    EnrollmentRequest:
+      type: object
+      required:
+        - semester
+        - schoolYear
+        - subjects
+
+      properties:
+        semester:
+          type: string
+          example: "1st Semester"
+
+        schoolYear:
+          type: string
+          example: "2026-2027"
+
+        subjects:
+          type: array
+          items:
+            type: string
+          example:
+            - "IT311"
+            - "IT312"
+            - "IT313"
+
+    Finance:
+      type: object
+      properties:
+        studentId:
+          type: string
+          example: "2026-00123"
+
+        totalBalance:
+          type: number
+          example: 15000
+
+        amountPaid:
+          type: number
+          example: 10000
+
+        remainingBalance:
+          type: number
+          example: 5000
+
+        status:
+          type: string
+          example: "With Balance"
+
+    LibraryRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+
+        studentId:
+          type: string
+          example: "2026-00123"
+
+        bookTitle:
+          type: string
+          example: "Database Systems"
+
+        borrowedDate:
+          type: string
+          format: date
+          example: "2026-10-01"
+
+        dueDate:
+          type: string
+          format: date
+          example: "2026-10-15"
+
+        status:
+          type: string
+          example: "Borrowed"
+
+    ClinicRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+
+        studentId:
+          type: string
+          example: "2026-00123"
+
+        appointmentDate:
+          type: string
+          format: date
+          example: "2026-10-12"
+
+        purpose:
+          type: string
+          example: "Medical Check-up"
+
+        status:
+          type: string
+          example: "Scheduled"
